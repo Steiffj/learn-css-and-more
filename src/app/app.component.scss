@@ -1,0 +1,75 @@
+.overlay-container {
+  --main-padding: 0.2rem;
+  --border-radius: 0.25rem;
+  --fc-light: #F5F5F5;
+  --fc-dark: #2a2a2b;
+}
+
+.overlay-container {
+  position: absolute;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.graph-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+
+  overflow: hidden;
+  background: #eeeff1;
+}
+
+.info {
+  position: absolute;
+  // bottom: var(--main-padding);
+  // right: var(--main-padding);
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+
+  max-width: clamp(15vw, 25vw, 30vw);
+  max-height: 95vh;
+  overflow: auto;
+
+  padding: 0.8rem;
+
+  color: white;
+  background: hsl(0 0% 0% / 0.4);
+  backdrop-filter: blur(0.06rem);
+  transition: 0.2s;
+  
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.info.default-collapse {
+  transform: translateX(100%);
+}
+
+.info.info.default-collapse[data-visible="true"] {
+  transform: translateX(0%);
+}
+
+.info:hover, .info:focus-visible {
+  color: var(--fc-light);
+  background: hsl(0 0% 0% / 0.7);
+  backdrop-filter: blur(0.26rem);
+
+  > p {
+    outline: solid 0.12rem #ffffff7a;
+    border-radius: var(--border-radius);
+  }
+}
+
+.info > p {
+  padding: 0.5rem;
+  transition: 0.2s;
+}
+
+.info::-webkit-scrollbar {
+  display: none;
+}
