@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'reset';
+
+@import "@fontsource/overpass";
+
+body {
+  font-family: 'Overpass';
+}
+
+.visually-hidden:not(:focus):not(:active) {
+  clip: rect(0 0 0 0); 
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap; 
+  width: 1px;
+}
