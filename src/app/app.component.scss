@@ -1,6 +1,6 @@
 .overlay-container {
-  --main-padding: 0.2rem;
-  --border-radius: 0.25rem;
+  --main-padding: 1rem;
+  --border-radius: 0.28rem;
   --fc-light: #F5F5F5;
   --fc-dark: #2a2a2b;
 }
@@ -11,6 +11,7 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 .graph-content {
@@ -26,10 +27,8 @@
 
 .info {
   position: absolute;
-  // bottom: var(--main-padding);
-  // right: var(--main-padding);
-  bottom: 0;
-  right: 0;
+  bottom: var(--main-padding);
+  right: var(--main-padding);
   z-index: 1;
 
   max-width: clamp(15vw, 25vw, 30vw);
@@ -37,17 +36,20 @@
   overflow: auto;
 
   padding: 0.8rem;
+  border: 0.3rem;
 
   color: white;
   background: hsl(0 0% 0% / 0.4);
   backdrop-filter: blur(0.06rem);
   transition: 0.2s;
   
-  border-radius: var(--border-radius) 0 0 var(--border-radius);
+  // border-radius: var(--border-radius) 0 0 var(--border-radius);
+  border-radius: var(--border-radius);
 }
 
 .info.default-collapse {
-  transform: translateX(100%);
+  transform: translateX(calc(100% + var(--main-padding))) ;
+  transition: transform 0.3s cubic-bezier(0.83, 0.08, 0.12, 0.9);
 }
 
 .info.info.default-collapse[data-visible="true"] {
