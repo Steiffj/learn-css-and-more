@@ -10,7 +10,7 @@ import {
   inject,
 } from '@angular/core';
 import Graph from 'graphology';
-import random from 'graphology-layout/random';
+import { circular } from 'graphology-layout';
 import forceAtlas2 from 'graphology-layout-forceatlas2';
 import FA2Layout from 'graphology-layout-forceatlas2/worker';
 import { delay, map, tap } from 'rxjs';
@@ -43,7 +43,8 @@ export class VisualizationComponent implements AfterViewInit {
       .getGnutellaGraph('p2p-Gnutella06')
       .pipe(
         map((graph) => {
-          random.assign(graph);
+          circular.assign(graph);
+          this.decorateGraph(graph);
           return graph;
         }),
         tap((graph) => this.renderSigma(graph)),
@@ -56,7 +57,7 @@ export class VisualizationComponent implements AfterViewInit {
           layout.start();
           return { layout, graph };
         }),
-        delay(6 * 1000),
+        delay(12 * 1000),
         map(({ layout, graph }) => {
           layout.stop();
           return graph;
@@ -65,7 +66,7 @@ export class VisualizationComponent implements AfterViewInit {
       .subscribe();
   }
 
-  public renderSigma(graph: Graph) {
+  renderSigma(graph: Graph) {
     const renderer = new Sigma(graph, this.renderTarget.nativeElement, {
       defaultEdgeType: 'arrow',
     });
@@ -77,6 +78,35 @@ export class VisualizationComponent implements AfterViewInit {
 
     renderer.on('clickStage', (event) => {
       this.clickStage.emit(event.event.original);
+    });
+  }
+
+  decorateGraph(graph: Graph) {
+    graph.forEachNode((node) => {
+      // const colors = '.'
+      //   .repeat(10)
+      //   .split('')
+      //   .map(() => chroma.random());
+
+      const colors = [
+        '#ffe9d2',
+        '#f77e00',
+        '#8d3d3d',
+        '#5d2828',
+        '#401f1f',
+        '#7fff00',
+        '#4b0082',
+        '#7df9ff',
+        '#ccccff',
+        '#aaaaaa',
+      ];
+
+      // label, size, color
+      graph.setNodeAttribute(node, 'label', node);
+      graph.setNodeAttribute(node, 'color', colors[+node % colors.length]);
+
+      const degree = graph.degree(node);
+      graph.setNodeAttribute(node, 'size', degree);
     });
   }
 }
