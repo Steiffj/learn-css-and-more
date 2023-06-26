@@ -5,7 +5,10 @@
     
   </div> -->
   <div class="info default-collapse" attr.data-visible="{{ !!node }}">
-    <h2> Info Title <span *ngIf="node"> Node #{{ node }} </span></h2>
+    <h2><span *ngIf="node"> Node #{{ node }} </span></h2>
+    <p>
+       <code>{{nodeDetails}}</code>
+    </p>
     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Optio, ut, molestias praesentium quasi fugiat veritatis vel voluptates, eveniet qui possimus ad ab ullam ratione? Et rerum dolores asperiores error voluptas?</p>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus sunt ut praesentium explicabo esse quod autem quam illo corporis! Possimus deserunt, eius rem vel nobis provident dolores dolor. Illum, eum?
     Placeat autem recusandae ipsum, quos, maiores voluptas quam omnis ducimus alias accusantium illo nemo. Sunt repellat modi eveniet possimus autem neque nulla iure dicta veniam. Veniam dolorem dolor dolores illum.
@@ -37,6 +40,6 @@
   </div>
 
   <main class="graph-content">
-    <app-visualization (clickNode)="onSigmaNodeClick($event)" (clickStage)="node = undefined" class="graph-underlay"></app-visualization>
+    <app-visualization (clickNode)="onSigmaNodeClick($event)" (clickStage)="node = undefined" (nodeSelected)="onSigmaNodeDetails($event)" class="graph-underlay"></app-visualization>
   </main>
 </div>

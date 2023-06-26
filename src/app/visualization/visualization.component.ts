@@ -17,6 +17,7 @@ import { delay, filter, map, tap } from 'rxjs';
 import Sigma from 'sigma';
 import { DataSourceService } from '../services/data-source.service';
 import { StateService } from '../services/state.service';
+import getNodeProgramImage from 'sigma/rendering/webgl/programs/node.image';
 
 @Component({
   selector: 'app-visualization',
@@ -39,6 +40,8 @@ export class VisualizationComponent implements AfterViewInit {
   nodeClicked: EventEmitter<string> = new EventEmitter();
   @Output('clickStage')
   clickStage: EventEmitter<MouseEvent> = new EventEmitter();
+  @Output('nodeSelected')
+  nodeSelected: EventEmitter<string> = new EventEmitter(); // TODO temp
 
   ngAfterViewInit(): void {
     this.dataSourceService
@@ -59,7 +62,7 @@ export class VisualizationComponent implements AfterViewInit {
           layout.start();
           return { layout, graph };
         }),
-        delay(30 * 1000),
+        delay(2 * 1000),
         map(({ layout, graph }) => {
           layout.stop();
           return graph;
@@ -73,6 +76,9 @@ export class VisualizationComponent implements AfterViewInit {
       renderLabels: false,
       renderEdgeLabels: true,
       defaultEdgeType: 'arrow',
+      nodeProgramClasses: {
+        image: getNodeProgramImage(),
+      },
     });
 
     // Set up Sigma event handlers
@@ -85,25 +91,46 @@ export class VisualizationComponent implements AfterViewInit {
       this.state.clearSelection();
     });
 
-    // TODO handle edge case in which new selected node was previously a highlighted
-    // (may require more complex state management to do well)
+    // TODO handle edge cases in which new selected node was previously a highlighted
+    // or selected node is double clicked
+    // (may require proper state management to do well)
     const toggleSelectionHighlight = (
       graph: Graph,
       node: string,
       show = true
     ) => {
-      graph.setNodeAttribute(node, 'highlighted', show);
+      // Current node display updates
+      if (show) {
+        graph.setNodeAttribute(node, 'highlighted', true);
+        const image = graph.getNodeAttribute(node, 'image-hidden');
+        graph.setNodeAttribute(node, 'image', image);
+        graph.setNodeAttribute(node, 'type', 'image');
+      } else {
+        graph.setNodeAttribute(node, 'highlighted', false);
+        graph.removeNodeAttribute(node, 'image');
+        graph.removeNodeAttribute(node, 'type');
+      }
+
+      // Neighboring node/edge display updates
       graph.forEachEdge(node, (edge) => {
         const neighbor = graph.opposite(node, edge);
-
         graph.setNodeAttribute(neighbor, 'highlighted', show);
-        // graph.setEdgeAttribute(edge, 'highlighted', show);
+
+        const image = graph.getNodeAttribute(neighbor, 'image-hidden');
+        graph.setNodeAttribute(neighbor, 'image', image);
 
         if (show) {
+          graph.setNodeAttribute(neighbor, 'highlighted', true);
           const label = graph.getEdgeAttribute(edge, 'label-hidden');
           graph.setEdgeAttribute(edge, 'label', label);
+          const image = graph.getNodeAttribute(neighbor, 'image-hidden');
+          graph.setNodeAttribute(neighbor, 'image', image);
+          graph.setNodeAttribute(neighbor, 'type', 'image');
         } else {
+          graph.setNodeAttribute(neighbor, 'highlighted', false);
           graph.removeEdgeAttribute(edge, 'label');
+          graph.removeNodeAttribute(neighbor, 'image');
+          graph.removeNodeAttribute(neighbor, 'type');
         }
       });
     };
@@ -121,31 +148,53 @@ export class VisualizationComponent implements AfterViewInit {
       .subscribe((selectionState) => {
         toggleSelectionHighlight(graph, selectionState.oldSelectedNode!, false);
       });
+
+    // TODO temp
+    this.state.selectedNode$.subscribe((node) => {
+      const nodeData = !!node
+        ? {
+            ...graph.getNodeAttributes(node),
+            degree: graph.degree(node),
+          }
+        : '';
+      this.nodeSelected.emit(JSON.stringify(nodeData, null, 2));
+    });
   }
 
   decorateGraph(graph: Graph) {
+    const colors = [
+      '#ffe9d2',
+      '#f77e00',
+      '#8d3d3d',
+      '#5d2828',
+      '#401f1f',
+      '#7fff00',
+      '#4b0082',
+      '#7df9ff',
+      '#ccccff',
+      '#aaaaaa',
+    ];
+
     graph.forEachNode((node) => {
-      // const colors = '.'
-      //   .repeat(10)
-      //   .split('')
-      //   .map(() => chroma.random());
+      const getNodeIcon = (graph: Graph, node: string) => {
+        const iconPath = './assets/phospher-icons/';
 
-      const colors = [
-        '#ffe9d2',
-        '#f77e00',
-        '#8d3d3d',
-        '#5d2828',
-        '#401f1f',
-        '#7fff00',
-        '#4b0082',
-        '#7df9ff',
-        '#ccccff',
-        '#aaaaaa',
-      ];
+        const degree = graph.degree(node);
+        if (degree < 10) {
+          return iconPath + 'user.svg';
+        } else if (degree < 50) {
+          return iconPath + 'user-circle-gear.svg';
+        } else if (degree < 100) {
+          return iconPath + 'hard-drives-thin.svg';
+        } else {
+          return iconPath + 'database-thin.svg';
+        }
+      };
 
-      // label, size, color
+      // label, size, color, image
       graph.setNodeAttribute(node, 'label', node);
       graph.setNodeAttribute(node, 'color', colors[+node % colors.length]);
+      graph.setNodeAttribute(node, 'image-hidden', getNodeIcon(graph, node));
 
       const degree = graph.degree(node);
       graph.setNodeAttribute(node, 'size', degree);

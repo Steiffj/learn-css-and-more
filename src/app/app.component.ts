@@ -13,8 +13,13 @@ import { VisualizationComponent } from './visualization/visualization.component'
 export class AppComponent {
   title = 'dep-vis';
   node?: string;
+  nodeDetails?: string;
 
   onSigmaNodeClick(node: string) {
     this.node = node;
+  }
+
+  onSigmaNodeDetails(details: string) {
+    this.nodeDetails = details;
   }
 }
