@@ -43,6 +43,7 @@
   transition: 0.2s;
 
   border-radius: var(--border-radius);
+  box-shadow: 0.6rem 0.7rem 0.8rem -0.4rem rgba($color: #0000, $alpha: 0.5);
 }
 
 .info.default-collapse {
@@ -50,7 +51,7 @@
   transition: transform 0.3s cubic-bezier(0.83, 0.08, 0.12, 0.9);
 }
 
-.info.info.default-collapse[data-visible="true"] {
+.info.default-collapse[data-visible="true"] {
   transform: translateX(0%);
 }
 

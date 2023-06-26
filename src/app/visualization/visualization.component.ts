@@ -13,9 +13,10 @@ import Graph from 'graphology';
 import { circular } from 'graphology-layout';
 import forceAtlas2 from 'graphology-layout-forceatlas2';
 import FA2Layout from 'graphology-layout-forceatlas2/worker';
-import { delay, map, tap } from 'rxjs';
+import { delay, filter, map, tap } from 'rxjs';
 import Sigma from 'sigma';
 import { DataSourceService } from '../services/data-source.service';
+import { StateService } from '../services/state.service';
 
 @Component({
   selector: 'app-visualization',
@@ -26,6 +27,7 @@ import { DataSourceService } from '../services/data-source.service';
 })
 export class VisualizationComponent implements AfterViewInit {
   private readonly dataSourceService = inject(DataSourceService);
+  private readonly state = inject(StateService);
 
   @ViewChild('renderTarget') renderTarget!: ElementRef;
   @HostListener('contextmenu', ['$event'])
@@ -57,7 +59,7 @@ export class VisualizationComponent implements AfterViewInit {
           layout.start();
           return { layout, graph };
         }),
-        delay(12 * 1000),
+        delay(30 * 1000),
         map(({ layout, graph }) => {
           layout.stop();
           return graph;
@@ -68,6 +70,8 @@ export class VisualizationComponent implements AfterViewInit {
 
   renderSigma(graph: Graph) {
     const renderer = new Sigma(graph, this.renderTarget.nativeElement, {
+      renderLabels: false,
+      renderEdgeLabels: true,
       defaultEdgeType: 'arrow',
     });
 
@@ -78,7 +82,45 @@ export class VisualizationComponent implements AfterViewInit {
 
     renderer.on('clickStage', (event) => {
       this.clickStage.emit(event.event.original);
+      this.state.clearSelection();
     });
+
+    // TODO handle edge case in which new selected node was previously a highlighted
+    // (may require more complex state management to do well)
+    const toggleSelectionHighlight = (
+      graph: Graph,
+      node: string,
+      show = true
+    ) => {
+      graph.setNodeAttribute(node, 'highlighted', show);
+      graph.forEachEdge(node, (edge) => {
+        const neighbor = graph.opposite(node, edge);
+
+        graph.setNodeAttribute(neighbor, 'highlighted', show);
+        // graph.setEdgeAttribute(edge, 'highlighted', show);
+
+        if (show) {
+          const label = graph.getEdgeAttribute(edge, 'label-hidden');
+          graph.setEdgeAttribute(edge, 'label', label);
+        } else {
+          graph.removeEdgeAttribute(edge, 'label');
+        }
+      });
+    };
+
+    renderer.on('clickNode', (event) => {
+      const selectedNode = event.node;
+      toggleSelectionHighlight(graph, selectedNode);
+      this.state.selectedNode$.next(selectedNode);
+    });
+
+    // would like to write reactive wrappers around Sigma/Graphology methods
+    // TODO handle subscription cleanup
+    this.state.selectedNodeStateChange$
+      .pipe(filter((selectionState) => !!selectionState.oldSelectedNode))
+      .subscribe((selectionState) => {
+        toggleSelectionHighlight(graph, selectionState.oldSelectedNode!, false);
+      });
   }
 
   decorateGraph(graph: Graph) {
@@ -107,6 +149,10 @@ export class VisualizationComponent implements AfterViewInit {
 
       const degree = graph.degree(node);
       graph.setNodeAttribute(node, 'size', degree);
+    });
+
+    graph.forEachEdge((edge) => {
+      graph.setEdgeAttribute(edge, 'label-hidden', 'Shared with');
     });
   }
 }
