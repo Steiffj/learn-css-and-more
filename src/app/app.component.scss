@@ -1,17 +1,18 @@
 .overlay-container {
-  --main-padding: 1rem;
+  --panel-padding: 0.5rem;
   --border-radius: 0.28rem;
   --fc-light: #F5F5F5;
   --fc-dark: #2a2a2b;
+
+  --panel-shadow: 0.4rem 0.5rem 0.5rem -0.4rem rgba(0,0,0,0.4)
 }
 
 .overlay-container {
-  position: absolute;
+  position: absolute; // in relation to the entire page
   top: 0;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  transform-style: preserve-3d;
 }
 
 .graph-content {
@@ -25,16 +26,29 @@
   background: #eeeff1;
 }
 
-.info {
-  position: absolute;
-  bottom: var(--main-padding);
-  right: var(--main-padding);
-  z-index: 1;
-
-  max-width: clamp(18vw, 25vw, 28vw);
-  max-height: 95vh;
+.side-panel-right {
   overflow: auto;
+  position: absolute;
+  bottom: 0;
+  right: var(--panel-padding);
+  max-width: clamp(18vw, 25vw, 28vw);
+  z-index: 1;
+}
 
+.panel-container-vertical {
+  background-color: transparent;
+  max-height: 100vh;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  section.info {
+    margin-block: var(--panel-padding);
+  } 
+}
+
+.info {
   padding: 0.8rem;
 
   color: white;
@@ -43,15 +57,15 @@
   transition: 0.2s;
 
   border-radius: var(--border-radius);
-  box-shadow: 0.6rem 0.7rem 0.8rem -0.4rem rgba($color: #0000, $alpha: 0.5);
+  box-shadow: var(--panel-shadow)
 }
 
-.info.default-collapse {
+.default-collapse {
   transform: translateX(calc(100% + var(--main-padding))) ;
   transition: transform 0.3s cubic-bezier(0.83, 0.08, 0.12, 0.9);
 }
 
-.info.default-collapse[data-visible="true"] {
+.default-collapse[data-visible="true"] {
   transform: translateX(0%);
 }
 
@@ -59,18 +73,12 @@
   color: var(--fc-light);
   background: hsl(0 0% 0% / 0.7);
   backdrop-filter: blur(0.26rem);
-
-  > p {
-    outline: solid 0.12rem #ffffff7a;
-    border-radius: var(--border-radius);
-  }
 }
 
 .info > p {
   padding: 0.5rem;
-  transition: 0.3s;
 }
 
-.info::-webkit-scrollbar {
-  display: none;
-}
+// .panel-container::-webkit-scrollbar {
+//   display: none;
+// }
