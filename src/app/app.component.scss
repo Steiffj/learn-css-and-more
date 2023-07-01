@@ -1,10 +1,38 @@
+// Custom properties
 .overlay-container {
-  --panel-padding: 0.5rem;
+  --panel-padding: 0.7rem;
   --border-radius: 0.28rem;
-  --fc-light: #F5F5F5;
-  --fc-dark: #2a2a2b;
+  --fc-title: #ffffff;
+  --fc-light: #F6F6F6;
 
-  --panel-shadow: 0.4rem 0.5rem 0.5rem -0.4rem rgba(0,0,0,0.4)
+}
+
+@mixin glass-translucent {
+  --glass-shadow: 0.4rem 0.5rem 0.5rem -0.4rem rgba(0,0,0,0.4);
+  --glass-inner-refraction: inset 0 0 1.6rem 0.1rem hsla(0, 3%, 24%, 0.301);
+  --border-light-source: 0.1rem solid hsla(0, 0%, 57%, 0.3);
+  --border-opposing-light-source: 0.02rem solid hsla(0, 3%, 26%, 0.1);
+
+  box-shadow:
+    var(--glass-shadow),
+    var(--glass-inner-refraction);
+  border-left: var(--border-light-source);
+  border-top: var(--border-opposing-light-source);
+  border-right: var(--border-opposing-light-source);
+
+  background: hsl(0 0% 0% / 0.5);
+  backdrop-filter: blur(0.07rem);
+}
+
+@mixin glass-opaque {
+  background: hsl(0 0% 0% / 0.8);
+  backdrop-filter: blur(0.28rem);
+}
+
+@mixin panel-toggle-animation {
+  transition:
+    translate 280ms cubic-bezier(.4,.05,.18,.92),
+    scale 150ms cubic-bezier(.54,.08,.1,.75) 260ms;
 }
 
 .overlay-container {
@@ -30,7 +58,8 @@
   overflow: auto;
   position: absolute;
   bottom: 0;
-  right: var(--panel-padding);
+  right: 0;
+  padding-right: var(--panel-padding);
   max-width: clamp(18vw, 25vw, 28vw);
   z-index: 1;
 }
@@ -42,43 +71,34 @@
   &::-webkit-scrollbar {
     display: none;
   }
-
-  section.info {
-    margin-block: var(--panel-padding);
-  } 
 }
 
-.info {
+section.panel {
+  @include glass-translucent();
+  transition: 150ms;
+
   padding: 0.8rem;
-
-  color: white;
-  background: hsl(0 0% 0% / 0.4);
-  backdrop-filter: blur(0.06rem);
-  transition: 0.2s;
-
   border-radius: var(--border-radius);
-  box-shadow: var(--panel-shadow)
+  color: white;
+
+  margin-block: var(--panel-padding);
+  margin-left: var(--panel-padding);
+  padding-inline: 1.5em;
 }
 
+// Animate panel moving on/off screen
 .default-collapse {
-  transform: translateX(calc(100% + var(--main-padding))) ;
-  transition: transform 0.3s cubic-bezier(0.83, 0.08, 0.12, 0.9);
+  translate: calc(100% + var(--panel-padding));
+  scale: 96%;
+
+  @include panel-toggle-animation();
 }
 
 .default-collapse[data-visible="true"] {
-  transform: translateX(0%);
+  translate: 0;
+  scale: 100%;
 }
 
-.info:hover, .info:focus-visible {
-  color: var(--fc-light);
-  background: hsl(0 0% 0% / 0.7);
-  backdrop-filter: blur(0.26rem);
+.panel:hover, .panel:focus-visible {
+  @include glass-opaque();
 }
-
-.info > p {
-  padding: 0.5rem;
-}
-
-// .panel-container::-webkit-scrollbar {
-//   display: none;
-// }
