@@ -86,6 +86,11 @@ section.panel {
   padding-inline: 1.5em;
 }
 
+section.panel.subgraph {
+  padding: 0.15rem;
+  height: 40rem;
+}
+
 // Animate panel moving on/off screen
 .default-collapse {
   translate: calc(100% + var(--panel-padding));

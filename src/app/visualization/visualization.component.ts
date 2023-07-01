@@ -79,6 +79,7 @@ export class VisualizationComponent implements AfterViewInit {
       nodeProgramClasses: {
         image: getNodeProgramImage(),
       },
+      allowInvalidContainer: true, // TODO temp
     });
 
     // Set up Sigma event handlers

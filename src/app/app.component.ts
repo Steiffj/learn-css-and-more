@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { VisualizationComponent } from './visualization/visualization.component';
 
@@ -10,10 +10,21 @@ import { VisualizationComponent } from './visualization/visualization.component'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   title = 'dep-vis';
   node?: string;
   nodeDetails?: string;
+
+  @ViewChild('panel')
+  panel!: ElementRef;
+
+  subgraphWidth?: string;
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.subgraphWidth = this.panel.nativeElement.offsetWidth;
+    });
+  }
 
   onSigmaNodeClick(node: string) {
     this.node = node;
