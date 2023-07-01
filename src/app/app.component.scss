@@ -75,7 +75,7 @@
 
 section.panel {
   @include glass-translucent();
-  transition: 150ms;
+  transition: 150ms, max-height 200ms ease-in-out;
 
   padding: 0.8rem;
   border-radius: var(--border-radius);
@@ -94,7 +94,8 @@ section.panel.subgraph {
 // Animate panel moving on/off screen
 .default-collapse {
   translate: calc(100% + var(--panel-padding));
-  scale: 96%;
+  // scale: 96%;
+  scale: 100%;
 
   @include panel-toggle-animation();
 }

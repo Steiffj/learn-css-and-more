@@ -1,7 +1,13 @@
 <div class="overlay-container">
   <div class="side-panel-right panel-container-vertical default-collapse" attr.data-visible="{{ !!node }}">
-    <section class="panel" #panel>
+    <section [appHeightTransition]="nodeDetails" class="panel" #panel>
       <h2><span *ngIf="node"> Node #{{ node }} </span></h2>
+      <p>
+        <code>{{nodeDetails}}</code>
+      </p>
+      <p>
+        <code>{{nodeDetails}}</code>
+      </p>
       <p>
         <code>{{nodeDetails}}</code>
       </p>
