@@ -61,6 +61,8 @@ main.graph-canvas {
   z-index: 1;
   pointer-events: auto;  // capture mouse interaction on UI panels
 
+  scrollbar-width: none;  // Firefox only
+
   &__right {
     right: 0;
     margin-right: var(--panel-padding);
@@ -110,13 +112,13 @@ main.graph-canvas {
   overflow: hidden;
 
   width: var(--ideal-width);
-  max-width: min(var(--ideal-width), 35vw);
-  aspect-ratio: 16 / 9;
+  max-width: clamp(30vw, var(--ideal-width), 45vw);
+  aspect-ratio: 16 / 10;
 
   padding: 0.15rem;
 }
 
-// Animate panel moving on/off screen
+// Animate panels moving on/off screen
 .default-collapse {
   translate: calc(100% + var(--panel-padding));
   scale: 97%;
