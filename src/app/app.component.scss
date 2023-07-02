@@ -1,3 +1,9 @@
+@mixin full-size {
+  position: absolute;
+  overflow: hidden;
+  inset: 0;
+}
+
 @mixin glass-translucent {
   --glass-shadow: 0.4rem 0.5rem 0.5rem -0.4rem rgba(0,0,0,0.4);
   --glass-inner-refraction: inset 0 0 1.6rem 0.1rem hsla(0, 3%, 24%, 0.301);
@@ -32,10 +38,8 @@
 // Graph rendering lives below all the UI panels
 main.graph-canvas {
   --canvas-background: #eeeff1;
-
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+  
+  @include full-size();
 
   background-color: var(--canvas-background);
 }
@@ -46,9 +50,7 @@ main.graph-canvas {
   --fc-title: #ffffff;
   --fc-light: #F6F6F6;
 
-  position: absolute;
-  overflow: hidden;
-  inset: 0;
+  @include full-size();
 
   pointer-events: none; // pass through mouse events to main graph
 }
@@ -56,9 +58,8 @@ main.graph-canvas {
 .panel {
   // Layout
   position: absolute;
-  overflow: auto;
   z-index: 1;
-  pointer-events: initial;  // capture mouse interaction on UI panels
+  pointer-events: auto;  // capture mouse interaction on UI panels
 
   &__right {
     right: 0;
@@ -83,33 +84,42 @@ main.graph-canvas {
   // Content and color
   @include glass-translucent();
 
-  padding: 0.8rem;
   border-radius: var(--border-radius);
   color: white;
-
-  padding-inline: 1.5em;
 }
+
+.panel::-webkit-scrollbar {
+  display: none;
+}
+
 
 // Individual panel styling
 .details {
-  max-width: clamp(20vw, 65ch, 30vw);
+  --ideal-width: 65ch;
+
+  overflow-y: auto;
+  padding-inline: 1.5em;
+  width: var(--ideal-width);
+  max-width: clamp(20vw, var(--ideal-width), 35vw);
+  max-height: calc(100vh - 2 * var(--panel-padding));
 }
 
 .subgraph {
-  overflow: hidden;
   --ideal-width: 45rem;
 
+  overflow: hidden;
+
   width: var(--ideal-width);
-  max-width: min(var(--ideal-width), 33vw);
-  padding: 0.15rem;
+  max-width: min(var(--ideal-width), 35vw);
   aspect-ratio: 16 / 9;
+
+  padding: 0.15rem;
 }
 
 // Animate panel moving on/off screen
 .default-collapse {
   translate: calc(100% + var(--panel-padding));
-  scale: 100%;
-  scale: 98%;
+  scale: 97%;
 
   @include panel-toggle-animation();
 }
