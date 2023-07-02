@@ -23,14 +23,14 @@ export class AppComponent implements AfterViewInit {
   node?: string;
   nodeDetails?: string;
 
-  @ViewChild('panel')
-  panel!: ElementRef;
+  @ViewChild('subgraph')
+  subgraph!: ElementRef;
 
   subgraphWidth?: string;
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.subgraphWidth = this.panel.nativeElement.offsetWidth;
+      this.subgraphWidth = this.subgraph.nativeElement.offsetWidth;
     });
   }
 

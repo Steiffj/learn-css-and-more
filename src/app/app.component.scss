@@ -30,7 +30,7 @@
 }
 
 // Graph rendering lives below all the UI panels
-.main-graph {
+main.graph-canvas {
   --canvas-background: #eeeff1;
 
   position: absolute;
@@ -48,27 +48,39 @@
 
   position: absolute;
   overflow: hidden;
-  inset: var(--panel-padding);
+  inset: 0;
 
   pointer-events: none; // pass through mouse events to main graph
 }
 
-.panel__right {
+.panel {
+  // Layout
   position: absolute;
   overflow: auto;
-  bottom: 0;
-  right: 0;
-
-  padding-right: var(--panel-padding);
-  padding-bottom: var(--panel-padding);
-
-  max-width: clamp(20vw, 65ch, 30vw);
   z-index: 1;
-
   pointer-events: initial;  // capture mouse interaction on UI panels
-}
 
-.panel {
+  &__right {
+    right: 0;
+    margin-right: var(--panel-padding);
+  }
+
+  &__left {
+    left: 0;
+    margin-left: var(--panel-padding);
+  }
+  
+  &__top {
+    top: 0;
+    margin-top: var(--panel-padding);
+  }
+
+  &__bottom {
+    bottom: 0;
+    margin-bottom: var(--panel-padding);
+  }
+
+  // Content and color
   @include glass-translucent();
 
   padding: 0.8rem;
@@ -78,9 +90,18 @@
   padding-inline: 1.5em;
 }
 
-.panel.subgraph {
+// Individual panel styling
+.details {
+  max-width: clamp(20vw, 65ch, 30vw);
+}
+
+.subgraph {
+  overflow: hidden;
+  --ideal-width: 45rem;
+
+  width: var(--ideal-width);
+  max-width: min(var(--ideal-width), 33vw);
   padding: 0.15rem;
-  width: 45rem;
   aspect-ratio: 16 / 9;
 }
 
@@ -88,7 +109,7 @@
 .default-collapse {
   translate: calc(100% + var(--panel-padding));
   scale: 100%;
-  scale: 96%;
+  scale: 98%;
 
   @include panel-toggle-animation();
 }
