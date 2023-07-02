@@ -1,12 +1,3 @@
-// Custom properties
-.overlay-container {
-  --panel-padding: 0.7rem;
-  --border-radius: 0.28rem;
-  --fc-title: #ffffff;
-  --fc-light: #F6F6F6;
-
-}
-
 @mixin glass-translucent {
   --glass-shadow: 0.4rem 0.5rem 0.5rem -0.4rem rgba(0,0,0,0.4);
   --glass-inner-refraction: inset 0 0 1.6rem 0.1rem hsla(0, 3%, 24%, 0.301);
@@ -17,6 +8,8 @@
     var(--glass-shadow),
     var(--glass-inner-refraction);
   border-left: var(--border-light-source);
+
+  // could make this a lot nicer with a gradient border image
   border-top: var(--border-opposing-light-source);
   border-right: var(--border-opposing-light-source);
 
@@ -26,76 +19,76 @@
 
 @mixin glass-opaque {
   background: hsl(0 0% 0% / 0.8);
-  backdrop-filter: blur(0.28rem);
+  backdrop-filter: blur(0.27rem);
 }
 
 @mixin panel-toggle-animation {
-  transition:
+  // first is for the hover background (ideally shouldn't go here)
+  transition: 150ms,
     translate 280ms cubic-bezier(.4,.05,.18,.92),
     scale 150ms cubic-bezier(.54,.08,.1,.75) 260ms;
 }
 
-.overlay-container {
-  position: absolute; // in relation to the entire page
-  top: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-}
+// Graph rendering lives below all the UI panels
+.main-graph {
+  --canvas-background: #eeeff1;
 
-.graph-content {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-
+  inset: 0;
   overflow: hidden;
-  background: #eeeff1;
+
+  background-color: var(--canvas-background);
 }
 
-.side-panel-right {
+.ui-panel-overlay {
+  --panel-padding: 0.7rem;
+  --border-radius: 0.28rem;
+  --fc-title: #ffffff;
+  --fc-light: #F6F6F6;
+
+  position: absolute;
+  overflow: hidden;
+  inset: var(--panel-padding);
+
+  pointer-events: none; // pass through mouse events to main graph
+}
+
+.panel__right {
+  position: absolute;
   overflow: auto;
-  position: absolute;
   bottom: 0;
   right: 0;
+
   padding-right: var(--panel-padding);
-  max-width: clamp(18vw, 25vw, 28vw);
+  padding-bottom: var(--panel-padding);
+
+  max-width: clamp(20vw, 65ch, 30vw);
   z-index: 1;
+
+  pointer-events: initial;  // capture mouse interaction on UI panels
 }
 
-.panel-container-vertical {
-  background-color: transparent;
-  max-height: 100vh;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-section.panel {
+.panel {
   @include glass-translucent();
-  transition: 150ms, max-height 200ms ease-in-out;
 
   padding: 0.8rem;
   border-radius: var(--border-radius);
   color: white;
 
-  margin-block: var(--panel-padding);
-  margin-left: var(--panel-padding);
   padding-inline: 1.5em;
 }
 
-section.panel.subgraph {
+.panel.subgraph {
   padding: 0.15rem;
-  height: 40rem;
+  width: 45rem;
+  aspect-ratio: 16 / 9;
 }
 
 // Animate panel moving on/off screen
 .default-collapse {
   translate: calc(100% + var(--panel-padding));
-  // scale: 96%;
   scale: 100%;
+  scale: 96%;
 
   @include panel-toggle-animation();
 }
@@ -105,6 +98,12 @@ section.panel.subgraph {
   scale: 100%;
 }
 
-.panel:hover, .panel:focus-visible {
+.panel:hover,
+.panel:focus-visible {
+  // TODO opacity transition for overlapping panels?
+  // swapping z-index looks jerky compared to focus animations
+  --top-z-index: 9999;
+
   @include glass-opaque();
+  z-index: var(--top-z-index);
 }

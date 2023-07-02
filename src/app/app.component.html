@@ -1,28 +1,26 @@
-<div class="overlay-container">
-  <div class="side-panel-right panel-container-vertical default-collapse" attr.data-visible="{{ !!node }}">
-    <section [appHeightTransition]="nodeDetails" class="panel" #panel>
-      <h2><span *ngIf="node"> Node #{{ node }} </span></h2>
-      <p>
-        <code>{{nodeDetails}}</code>
-      </p>
-      <p>
-        <code>{{nodeDetails}}</code>
-      </p>
-      <p>
-        <code>{{nodeDetails}}</code>
-      </p>
-    </section>
-    <section class="panel subgraph">
-      <app-visualization [ngStyle]="{ width: subgraphWidth }" ></app-visualization>
-    </section>
-    <section class="panel">
-      <h3> Even More Info Down Here </h3>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quos libero. Consectetur molestias perspiciatis cumque aliquam delectus similique quam eaque impedit voluptatibus quasi accus
-      </p>
-    </section>
-  </div>
+<main class="main-graph">
+  <app-visualization (clickNode)="onSigmaNodeClick($event)" (clickStage)="node = undefined" (nodeSelected)="onSigmaNodeDetails($event)" class="graph-underlay"></app-visualization>
+</main>
 
-  <main class="graph-content">
-    <app-visualization (clickNode)="onSigmaNodeClick($event)" (clickStage)="node = undefined" (nodeSelected)="onSigmaNodeDetails($event)" class="graph-underlay"></app-visualization>
-  </main>
+<div class="ui-panel-overlay">
+  <section class="panel panel__right default-collapse" attr.data-visible="{{ !!node }}" #panel>
+    <h2><span *ngIf="node"> Node #{{ node }} </span></h2>
+    <p>
+      <code>{{nodeDetails}}</code>
+    </p>
+    <p>
+      <code>{{nodeDetails}}</code>
+    </p>
+    <p>
+      <code>{{nodeDetails}}</code>
+    </p>
+  </section>
+  <section class="subgraph panel panel__right default-collapse" attr.data-visible="{{ !!node }}">
+    <app-visualization [ngStyle]="{ width: subgraphWidth }" ></app-visualization>
+  </section>
+  <section class="panel panel__right default-collapse" attr.data-visible="{{ !!node }}">
+    <h3> Even More Info Down Here </h3>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quos libero. Consectetur molestias perspiciatis cumque aliquam delectus similique quam eaque impedit voluptatibus quasi accus
+    </p>
+  </section>
 </div>
