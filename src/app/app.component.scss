@@ -109,6 +109,7 @@ main.graph-canvas {
 .subgraph {
   --ideal-width: 45rem;
 
+  isolation: isolate;
   overflow: hidden;
 
   width: var(--ideal-width);
@@ -116,6 +117,14 @@ main.graph-canvas {
   aspect-ratio: 16 / 10;
 
   padding: 0.15rem;
+}
+
+.subgraph-resize-menu {
+  position: absolute;
+  z-index: 1;
+
+  top: 1em;
+  right: 1em;
 }
 
 // Animate panels moving on/off screen

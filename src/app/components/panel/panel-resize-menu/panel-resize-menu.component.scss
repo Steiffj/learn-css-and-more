@@ -1,0 +1,46 @@
+@use 'button-reset';
+
+$icon-size: 1.7em;
+$button-color: rgba(173, 173, 173, 0.4);
+
+button {
+  --button-size: calc($icon-size + 1em);
+
+  // Alignment
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--button-size);
+  height: var(--button-size);
+
+  // Styling
+  // outline: solid 0.012em color-mix(in srgb, $button-color 20%, currentColor);
+  border-radius: 25%;
+  background-color: $button-color;
+
+  // Animations
+  transition: transform 100ms ease-in-out;
+}
+
+// TODO make it fancy
+button:hover {
+  transform: scale(1.07);
+}
+
+button:active {
+  transform: scale(0.93);
+}
+
+.panel-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  gap: 0.5em;
+}
+
+i.ph-thin {
+  padding: 0.14em;
+  font-size: $icon-size;
+}

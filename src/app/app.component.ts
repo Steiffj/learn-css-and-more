@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { transformHeight } from './directives/height-transition-animation';
 import { HeightTransitionDirective } from './directives/height-transition.directive';
 import { VisualizationComponent } from './visualization/visualization.component';
+import { PanelResizeMenuComponent } from './components/panel/panel-resize-menu/panel-resize-menu.component';
 
 @Component({
   selector: 'app-root',
@@ -13,26 +14,16 @@ import { VisualizationComponent } from './visualization/visualization.component'
     RouterOutlet,
     VisualizationComponent,
     HeightTransitionDirective,
+    PanelResizeMenuComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   animations: [transformHeight],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
   title = 'dep-vis';
   node?: string;
   nodeDetails?: string;
-
-  @ViewChild('subgraph')
-  subgraph!: ElementRef;
-
-  subgraphWidth?: string;
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.subgraphWidth = this.subgraph.nativeElement.offsetWidth;
-    });
-  }
 
   onSigmaNodeClick(node: string) {
     this.node = node;

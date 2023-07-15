@@ -1,0 +1,11 @@
+<menu class="panel-menu" *ngIf="resize !== 'none'">
+  <li *ngIf="resize === 'horizontal'">
+    <button><i class="ph-thin ph-arrows-horizontal"></i></button>
+  </li>
+  <li *ngIf="resize === 'vertical'">
+    <button><i class="ph-thin ph-arrows-vertical"></i></button>
+  </li>
+  <li *ngIf="resize === 'both'">
+    <button><i class="ph-thin ph-arrows-out-simple"></i></button>
+  </li>
+</menu>
